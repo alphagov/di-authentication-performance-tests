@@ -1,0 +1,12 @@
+.gradle
+build
+out
+results
+*.iml
+*.ipr
+*.iws
+.idea/
+.env
+gs
+*.zip
+.DS_Store
