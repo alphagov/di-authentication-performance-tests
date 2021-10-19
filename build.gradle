@@ -1,0 +1,59 @@
+buildscript {
+    repositories {
+        maven { url 'https://gds.jfrog.io/artifactory/allowed-repos' }
+    }
+    dependencies {
+        classpath group: 'uk.gov.ida', name: 'gradle-gatling-plugin', version: '1.5-13'
+    }
+}
+
+plugins {
+    id "com.diffplug.spotless" version "5.15.1"
+}
+
+apply plugin: 'scala'
+apply plugin: 'idea'
+apply plugin: 'gatling'
+
+repositories {
+    maven { url 'https://gds.jfrog.io/artifactory/remote-repos' }
+}
+
+test {
+    environment "TEST_SUITE_CORRELATION_ID", UUID.randomUUID().toString()
+    testLogging.showStandardStreams = true
+}
+dependencies {
+    testImplementation 'io.gatling.highcharts:gatling-charts-highcharts:3.3.1',
+            'io.gatling:gatling-http:3.3.1'
+}
+
+spotless {
+    scala {
+        scalafmt()
+    }
+}
+
+def scenarioList = project.hasProperty('scenario') ?
+        project.getProperty('scenario').split(";").collect { s -> "uk.gov.di.authentication.perftest.".concat(s) } :
+        ["uk.gov.di.authentication.perftest.HelloWorldAuthSimulation"]
+
+gatling {
+    systemProperties = [
+            'gatling.http.ssl.trustStore.file'    : System.env.TLS_TRUSTSTORE_PATH,
+            'gatling.http.ssl.trustStore.password': 'puppet'
+    ] + System.properties
+}
+
+gatling {
+    scenarios = scenarioList
+}
+
+task zipTestResults(type: Zip) {
+    from 'build/gatling-reports'
+    include '**/*'
+    archiveName 'gatling-test-results-' + new Date().format('yyyyMMddHHmmss') + '.zip'
+    destinationDir(file('.'))
+}
+
+defaultTasks 'clean', 'gatlingTest'
