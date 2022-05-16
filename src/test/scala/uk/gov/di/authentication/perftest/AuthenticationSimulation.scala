@@ -65,7 +65,7 @@ class AuthenticationSimulation extends Simulation {
           regex("""<input type="hidden" name="_csrf" value="(.*)"/>""")
             .saveAs("csrfToken")
         )
-        .header("User-Agent", "Chrome")
+        .header("User-Agent", Configuration.userAgent)
     ).pause(Configuration.pauseMin, Configuration.pauseMax)
   }
 
@@ -77,6 +77,7 @@ class AuthenticationSimulation extends Simulation {
       .check(
         status.is(200)
       )
+      .header("User-Agent", Configuration.userAgent)
   ).pause(Configuration.pauseMin, Configuration.pauseMax)
 
   private def reqEnterEmailPost() = exec(
@@ -85,6 +86,7 @@ class AuthenticationSimulation extends Simulation {
       .formParam("_csrf", "${csrfToken}")
       .formParam("email", Configuration.TEST_USER_EMAIL)
       .check(status.is(200))
+      .header("User-Agent", Configuration.userAgent)
   )
     .pause(Configuration.pauseMin, Configuration.pauseMax)
 
@@ -94,6 +96,7 @@ class AuthenticationSimulation extends Simulation {
       .formParam("_csrf", "${csrfToken}")
       .formParam("password", Configuration.TEST_USER_PASSWORD)
       .check(status.is(200))
+      .header("User-Agent", Configuration.userAgent)
   ).pause(Configuration.pauseMin, Configuration.pauseMax)
 
   private def reqEnterCodePost() = exec(
@@ -102,7 +105,7 @@ class AuthenticationSimulation extends Simulation {
       .formParam("_csrf", "${csrfToken}")
       .formParam("code", Configuration.TEST_USER_PHONE_CODE)
       .check(status.is(200))
-      .header("User-Agent", "Chrome")
+      .header("User-Agent", Configuration.userAgent)
   ).pause(Configuration.pauseMin, Configuration.pauseMax)
 
   private def reqAccountManagementLaunchGetRequest(): ChainBuilder = {
@@ -112,7 +115,7 @@ class AuthenticationSimulation extends Simulation {
         .check(
           status.is(200)
         )
-        .header("User-Agent", "Chrome")
+        .header("User-Agent", Configuration.userAgent)
     ).pause(Configuration.pauseMin, Configuration.pauseMax)
   }
 
