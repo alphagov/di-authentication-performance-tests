@@ -84,4 +84,6 @@ object Configuration {
   val pauseMax: FiniteDuration = Parameters
     .doubleParameter("pauseBetweenRequestsInSecondsMax", 6)
     .toLong seconds
+
+  val userAgent: String = "Chrome"
 }
